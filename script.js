@@ -254,7 +254,7 @@ function setupEventListeners(elements = null) {
 
     els.todoList.addEventListener('change', (e) => {
         if (e.target.classList.contains('todo-checkbox')) {
-            const id = parseInt(e.target.dataset.id);
+            const id = parseFloat(e.target.dataset.id);
             toggleTodo(id);
             render(els);
         }
@@ -262,7 +262,7 @@ function setupEventListeners(elements = null) {
 
     els.todoList.addEventListener('click', (e) => {
         if (e.target.classList.contains('delete-btn')) {
-            const id = parseInt(e.target.dataset.id);
+            const id = parseFloat(e.target.dataset.id);
             deleteTodo(id);
             render(els);
         }
@@ -270,7 +270,7 @@ function setupEventListeners(elements = null) {
 
     els.todoList.addEventListener('change', (e) => {
         if (e.target.classList.contains('priority-picker')) {
-            const id = parseInt(e.target.dataset.id);
+            const id = parseFloat(e.target.dataset.id);
             const priority = e.target.value;
             updateTodoPriority(id, priority);
             render(els);
