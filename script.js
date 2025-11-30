@@ -1,3 +1,144 @@
+// ===== PASSWORD PROTECTION =====
+let isAuthenticated = false;
+
+function initializeApp() {
+    if (sessionStorage.getItem('authenticated')) {
+        isAuthenticated = true;
+        setupApp();
+    } else {
+        showLoginForm();
+    }
+}
+
+function showLoginForm() {
+    document.body.innerHTML = `
+        <div style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #90EE90;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
+            margin: 0;
+            padding: 20px;
+        ">
+            <div style="
+                background: white;
+                padding: 40px;
+                border-radius: 8px;
+                box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+                width: 100%;
+                max-width: 320px;
+            ">
+                <h2 style="
+                    text-align: center;
+                    margin: 0 0 10px 0;
+                    color: #333;
+                    font-size: 24px;
+                ">To-Do List</h2>
+                
+                <p style="
+                    text-align: center;
+                    color: #999;
+                    font-size: 14px;
+                    margin: 0 0 30px 0;
+                ">Password protected app</p>
+                
+                <input 
+                    type="password" 
+                    id="passwordInput"
+                    placeholder="Enter password"
+                    style="
+                        width: 100%;
+                        padding: 12px;
+                        border: 1px solid #ddd;
+                        border-radius: 4px;
+                        font-size: 14px;
+                        box-sizing: border-box;
+                        margin-bottom: 12px;
+                    "
+                />
+                
+                <button 
+                    onclick="authenticateUser()"
+                    style="
+                        width: 100%;
+                        padding: 12px;
+                        background: #667eea;
+                        color: white;
+                        border: none;
+                        border-radius: 4px;
+                        font-size: 14px;
+                        font-weight: 600;
+                        cursor: pointer;
+                        transition: background 0.2s;
+                    "
+                    onmouseover="this.style.background='#5568d3'"
+                    onmouseout="this.style.background='#667eea'"
+                >
+                    Login
+                </button>
+                
+                <p id="errorMsg" style="
+                    color: #ff6b6b;
+                    text-align: center;
+                    margin-top: 12px;
+                    font-size: 13px;
+                    display: none;
+                "></p>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('passwordInput').focus();
+    document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') authenticateUser();
+    });
+}
+
+async function authenticateUser() {
+    const passwordInput = document.getElementById('passwordInput').value;
+    const errorMsg = document.getElementById('errorMsg');
+    
+    if (!passwordInput) {
+        errorMsg.textContent = 'Please enter a password';
+        errorMsg.style.display = 'block';
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: passwordInput })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            sessionStorage.setItem('authenticated', 'true');
+            isAuthenticated = true;
+            location.reload();
+        } else {
+            errorMsg.textContent = 'Incorrect password. Try again.';
+            errorMsg.style.display = 'block';
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('passwordInput').focus();
+        }
+    } catch (error) {
+        errorMsg.textContent = 'Error connecting to server';
+        errorMsg.style.display = 'block';
+        console.error('Auth error:', error);
+    }
+}
+
+function setupApp() {
+    // Initialize the main to-do app
+    initialize();
+}
+
+// ===== END PASSWORD PROTECTION =====
+
 // State management
 let todos = [];
 let currentFilter = 'all';
@@ -291,7 +432,7 @@ function initialize() {
 
 // Auto-initialize if script is loaded in browser
 if (typeof document !== 'undefined') {
-    document.addEventListener('DOMContentLoaded', initialize);
+    document.addEventListener('DOMContentLoaded', initializeApp);
 }
 
 // Export functions for testing
