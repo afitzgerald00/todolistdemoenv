@@ -17,7 +17,7 @@ function showLoginForm() {
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: #90EE90;
+            background: #ADD8E6;
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto;
             margin: 0;
             padding: 20px;
@@ -35,7 +35,7 @@ function showLoginForm() {
                     margin: 0 0 10px 0;
                     color: #333;
                     font-size: 24px;
-                ">To-Do List</h2>
+                ">Testing Environment</h2>
                 
                 <p style="
                     text-align: center;
